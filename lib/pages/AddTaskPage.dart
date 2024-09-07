@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:task_management_app/model/taskProvider.dart';
 
@@ -15,6 +16,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _dueDateController = TextEditingController();
   DateTime _dueDate = DateTime.now();
   bool _isCompleted = false;
 
@@ -25,7 +27,10 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
       _titleController.text = widget.task!['title'];
       _descriptionController.text = widget.task!['description'];
       _dueDate = DateTime.parse(widget.task!['dueDate']);
+      _dueDateController.text = _dueDate.toLocal().toString().split(' ')[0];
       _isCompleted = widget.task!['isCompleted'] == 1;
+    } else {
+      _dueDateController.text = _dueDate.toLocal().toString().split(' ')[0];
     }
   }
 
@@ -61,9 +66,13 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                   return null;
                 },
               ),
-              ListTile(
-                title: Text('Due Date: ${_dueDate.toLocal()}'.split(' ')[0]),
-                trailing: Icon(Icons.calendar_today),
+              TextFormField(
+                controller: _dueDateController,
+                decoration: InputDecoration(
+                  labelText: 'Due Date',
+                  suffixIcon: Icon(Icons.calendar_today),
+                ),
+                readOnly: true,
                 onTap: _selectDueDate,
               ),
               ElevatedButton(
@@ -91,6 +100,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     if (picked != null && picked != _dueDate) {
       setState(() {
         _dueDate = picked;
+        _dueDateController.text = _dueDate.toLocal().toString().split(' ')[0];
       });
     }
   }
@@ -99,7 +109,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     final task = {
       'title': _titleController.text,
       'description': _descriptionController.text,
-      'dueDate': _dueDate.toIso8601String(),
+      'dueDate': DateFormat('yyyy-MM-dd').format(_dueDate),
       'isCompleted': _isCompleted ? 1 : 0,
     };
     if (widget.task == null) {
