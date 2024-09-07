@@ -19,11 +19,11 @@ class Settings extends StatelessWidget {
             return Container(
               color: color,
               child: Center(
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text('Dark Mode'),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
                       transitionBuilder:
@@ -38,10 +38,10 @@ class Settings extends StatelessWidget {
                         color: themeProvider.isDarkMode
                             ? Colors.yellow
                             : Colors.grey,
-                        size: 30,
+                        size: 45,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(height: 10),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
                       transitionBuilder:

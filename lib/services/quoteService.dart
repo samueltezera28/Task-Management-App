@@ -5,13 +5,21 @@ class QuoteService {
   static const String _url = 'https://api.quotable.io/random';
 
   Future<String> fetchQuote() async {
-    final response = await http.get(Uri.parse(_url));
+    try {
+      final response = await http.get(Uri.parse(_url));
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['content'];
-    } else {
-      throw Exception('Failed to load quote');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['content'];
+      } else if (response.statusCode == 404) {
+        return 'Quote not found. Try again later!';
+      } else if (response.statusCode == 500) {
+        return 'Server error. Please try again later!';
+      } else {
+        return 'Unexpected error occurred. Please try again!';
+      }
+    } catch (e) {
+      return 'Failed to load quote. Please check your internet connection.';
     }
   }
 }
