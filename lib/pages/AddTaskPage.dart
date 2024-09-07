@@ -91,17 +91,30 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   }
 
   Future<void> _selectDueDate() async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _dueDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _dueDate) {
-      setState(() {
-        _dueDate = picked;
-        _dueDateController.text = _dueDate.toLocal().toString().split(' ')[0];
-      });
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(_dueDate),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _dueDate = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+          _dueDateController.text =
+              DateFormat('yyyy-MM-dd HH:mm').format(_dueDate);
+        });
+      }
     }
   }
 
@@ -109,7 +122,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
     final task = {
       'title': _titleController.text,
       'description': _descriptionController.text,
-      'dueDate': DateFormat('yyyy-MM-dd').format(_dueDate),
+      'dueDate': DateFormat('yyyy-MM-dd HH:mm').format(_dueDate),
       'isCompleted': _isCompleted ? 1 : 0,
     };
     if (widget.task == null) {
