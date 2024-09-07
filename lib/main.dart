@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_management_app/model/taskProvider.dart';
+import 'package:task_management_app/model/themeProvider.dart';
 import 'package:task_management_app/pages/AddTaskPage.dart';
 import 'package:task_management_app/pages/CompletedTaskPage.dart';
 import 'package:task_management_app/pages/HomePage.dart';
 import 'package:task_management_app/pages/SettingPage.dart';
 
 void main() {
-  runApp(ChangeNotifierProvider(
-    create: (context) => TaskProvider(),
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => TaskProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,12 +24,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       title: 'Task Management App',
+      themeMode: themeProvider.currentTheme,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData.dark(),
       home: const MyHomePage(title: 'Task Management'),
     );
   }
