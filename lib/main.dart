@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:task_management_app/model/taskProvider.dart';
 import 'package:task_management_app/pages/AddTaskPage.dart';
 import 'package:task_management_app/pages/CompletedTaskPage.dart';
 import 'package:task_management_app/pages/HomePage.dart';
 import 'package:task_management_app/pages/SettingPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => TaskProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
