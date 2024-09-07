@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:task_management_app/model/taskProvider.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
+  final Map<String, dynamic>? task;
+
+  AddEditTaskScreen({this.task});
+
   @override
   _AddEditTaskScreenState createState() => _AddEditTaskScreenState();
 }
@@ -13,10 +19,21 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
   bool _isCompleted = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.task != null) {
+      _titleController.text = widget.task!['title'];
+      _descriptionController.text = widget.task!['description'];
+      _dueDate = DateTime.parse(widget.task!['dueDate']);
+      _isCompleted = widget.task!['isCompleted'] == 1;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add/Edit Task'),
+        title: Text(widget.task == null ? 'Add Task' : 'Edit Task'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,23 +66,13 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 trailing: Icon(Icons.calendar_today),
                 onTap: _selectDueDate,
               ),
-              SwitchListTile(
-                title: Text('Completed'),
-                value: _isCompleted,
-                onChanged: (bool value) {
-                  setState(() {
-                    _isCompleted = value;
-                  });
-                },
-              ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Save the task
-                    Navigator.pop(context);
+                    _saveTask();
                   }
                 },
-                child: Text('Save Task'),
+                child: Text(widget.task == null ? 'Save Task' : 'Update Task'),
               ),
             ],
           ),
@@ -86,5 +93,21 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
         _dueDate = picked;
       });
     }
+  }
+
+  Future<void> _saveTask() async {
+    final task = {
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'dueDate': _dueDate.toIso8601String(),
+      'isCompleted': _isCompleted ? 1 : 0,
+    };
+    if (widget.task == null) {
+      await Provider.of<TaskProvider>(context, listen: false).addTask(task);
+    } else {
+      task['id'] = widget.task!['id'];
+      await Provider.of<TaskProvider>(context, listen: false).updateTask(task);
+    }
+    Navigator.pop(context); // Return to the home page
   }
 }
