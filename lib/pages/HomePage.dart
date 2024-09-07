@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, child) {
           if (taskProvider.tasks.isEmpty) {
-            return Center(child: Text('No tasks available'));
+            return const Center(child: Text('No tasks available'));
           } else {
             return ListView.builder(
               itemCount: taskProvider.tasks.length,
