@@ -16,7 +16,9 @@ class CompletedTasks extends StatelessWidget {
               .toList();
 
           if (completedTasks.isEmpty) {
-            return Center(child: Text('No completed tasks available'));
+            return const Center(
+                child:
+                    Text('No completed tasks yet!\nTime to get to work! 💪'));
           } else {
             return ListView.builder(
               itemCount: completedTasks.length,
@@ -24,10 +26,7 @@ class CompletedTasks extends StatelessWidget {
                 final task = completedTasks[index];
                 return ListTile(
                   title: Text(
-                    task['title'],
-                    style: TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                    ),
+                    '${index + 1}. ${task['title']}',
                   ),
                   subtitle: Text(
                     '${task['description']}\nDue Date: ${task['dueDate']}\nStatus: Completed',
